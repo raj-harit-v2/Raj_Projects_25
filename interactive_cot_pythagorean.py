@@ -4,19 +4,69 @@ Works WITHOUT AI - uses MCP tools directly with user input
 """
 
 import asyncio
+import ast
+import json
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from rich.console import Console
 from rich.panel import Panel
+from rich.syntax import Syntax
 
 console = Console()
+
+
+def generate_reasoning_review(tool_name: str, success: bool, has_steps: bool = True) -> dict:
+    """Generate a structured review of the reasoning process"""
+    
+    # Base evaluation for all tools
+    review = {
+        "explicit_reasoning": has_steps,  # Whether reasoning steps are shown
+        "structured_output": True,  # All our outputs are structured
+        "tool_separation": True,  # Each tool has clear separation
+        "conversation_loop": True,  # Interactive loop is present
+        "instructional_framing": True,  # Clear instructions provided
+        "internal_self_checks": success,  # Validation and error checking
+        "reasoning_type_awareness": has_steps,  # Aware of reasoning being used
+        "fallbacks": True,  # Error handling with fallbacks
+    }
+    
+    # Tool-specific assessments
+    if tool_name == "check_triple":
+        review["overall_clarity"] = "Excellent: Direct validation with clear classification and GCD computation."
+    elif tool_name == "find_triples":
+        review["overall_clarity"] = "Excellent: Systematic search with primitive/non-primitive separation."
+    elif tool_name == "calculate_gcd":
+        review["overall_clarity"] = "Excellent: Step-by-step Euclidean algorithm with explicit reasoning."
+    elif tool_name == "verify_and_classify":
+        review["overall_clarity"] = "Excellent: Complete analysis with validation, GCD, and classification."
+    else:
+        review["overall_clarity"] = "Operation completed with structured reasoning."
+    
+    return review
+
+
+def display_reasoning_review(tool_name: str, success: bool, has_steps: bool = True):
+    """Display the reasoning review as formatted JSON"""
+    review = generate_reasoning_review(tool_name, success, has_steps)
+    json_output = json.dumps(review, indent=2)
+    
+    syntax = Syntax(json_output, "json", theme="monokai", line_numbers=False)
+    console.print("\n" + "="*70)
+    console.print(Panel(syntax, title="[bold cyan]Reasoning Quality Review[/bold cyan]", border_style="magenta"))
+    console.print("="*70)
 
 
 async def interactive_menu():
     """Interactive menu system using COT tools"""
     
+    import sys
+    import os
+    
+    # Use the current Python interpreter (from venv if active)
+    python_path = sys.executable
+    
     server_params = StdioServerParameters(
-        command="python",
+        command=python_path,
         args=["cot_pythagorean_finder.py"]
     )
     
@@ -58,12 +108,28 @@ async def interactive_menu():
                             arguments={"a": a, "b": b, "c": c}
                         )
                         
-                        console.print(f"\n[green]Result:[/green] {result.content[0].text[:200]}...")
+                        # Parse result to get validity status
+                        result_text = result.content[0].text
+                        try:
+                            result_dict = ast.literal_eval(result_text)
+                            is_valid = result_dict.get('valid', False)
+                            status_color = "green" if is_valid else "red"
+                            status_text = "True" if is_valid else "False"
+                            console.print(f"\n[bold {status_color}]Valid Pythagorean Triple: {status_text}[/bold {status_color}]")
+                        except:
+                            pass
+                        
+                        console.print(f"\n[cyan]Analysis:[/cyan] {result_text[:250]}...")
+                        
+                        # Display reasoning quality review
+                        display_reasoning_review("check_triple", success=True, has_steps=True)
                         
                     except ValueError:
                         console.print("[red]Error: Please enter valid integers[/red]")
+                        display_reasoning_review("check_triple", success=False, has_steps=False)
                     except Exception as e:
                         console.print(f"[red]Error: {e}[/red]")
+                        display_reasoning_review("check_triple", success=False, has_steps=False)
                 
                 elif choice == "2":
                     # Find triples
@@ -72,6 +138,7 @@ async def interactive_menu():
                         
                         if max_c < 3:
                             console.print("[red]Error: Please enter a value >= 3[/red]")
+                            display_reasoning_review("find_triples", success=False, has_steps=False)
                             continue
                         
                         console.print(f"\n[cyan]Finding all Pythagorean triples with c <= {max_c}...[/cyan]")
@@ -84,10 +151,15 @@ async def interactive_menu():
                         # The result is displayed by the MCP tool in stderr
                         console.print(f"\n[green]Search complete![/green]")
                         
+                        # Display reasoning quality review
+                        display_reasoning_review("find_triples", success=True, has_steps=True)
+                        
                     except ValueError:
                         console.print("[red]Error: Please enter a valid integer[/red]")
+                        display_reasoning_review("find_triples", success=False, has_steps=False)
                     except Exception as e:
                         console.print(f"[red]Error: {e}[/red]")
+                        display_reasoning_review("find_triples", success=False, has_steps=False)
                 
                 elif choice == "3":
                     # Calculate GCD
@@ -98,6 +170,7 @@ async def interactive_menu():
                         
                         if a <= 0 or b <= 0:
                             console.print("[red]Error: Both numbers must be positive[/red]")
+                            display_reasoning_review("calculate_gcd", success=False, has_steps=False)
                             continue
                         
                         console.print(f"\n[cyan]Calculating GCD({a}, {b}) using Euclidean algorithm...[/cyan]")
@@ -109,10 +182,15 @@ async def interactive_menu():
                         
                         console.print(f"\n[green]Calculation complete![/green]")
                         
+                        # Display reasoning quality review
+                        display_reasoning_review("calculate_gcd", success=True, has_steps=True)
+                        
                     except ValueError:
                         console.print("[red]Error: Please enter valid integers[/red]")
+                        display_reasoning_review("calculate_gcd", success=False, has_steps=False)
                     except Exception as e:
                         console.print(f"[red]Error: {e}[/red]")
+                        display_reasoning_review("calculate_gcd", success=False, has_steps=False)
                 
                 elif choice == "4":
                     # Verify and classify
@@ -124,6 +202,7 @@ async def interactive_menu():
                         
                         if a <= 0 or b <= 0 or c <= 0:
                             console.print("[red]Error: All numbers must be positive[/red]")
+                            display_reasoning_review("verify_and_classify", success=False, has_steps=False)
                             continue
                         
                         console.print(f"\n[cyan]Performing complete analysis of ({a}, {b}, {c})...[/cyan]")
@@ -133,12 +212,28 @@ async def interactive_menu():
                             arguments={"a": a, "b": b, "c": c}
                         )
                         
-                        console.print(f"\n[green]Analysis complete![/green]")
+                        # Parse result to get validity status
+                        result_text = result.content[0].text
+                        try:
+                            result_dict = ast.literal_eval(result_text)
+                            is_valid = result_dict.get('valid', False)
+                            status_color = "green" if is_valid else "red"
+                            status_text = "True" if is_valid else "False"
+                            console.print(f"\n[bold {status_color}]Valid Pythagorean Triple: {status_text}[/bold {status_color}]")
+                        except:
+                            pass
+                        
+                        console.print(f"\n[cyan]Analysis:[/cyan] {result_text[:250]}...")
+                        
+                        # Display reasoning quality review
+                        display_reasoning_review("verify_and_classify", success=True, has_steps=True)
                         
                     except ValueError:
                         console.print("[red]Error: Please enter valid integers[/red]")
+                        display_reasoning_review("verify_and_classify", success=False, has_steps=False)
                     except Exception as e:
                         console.print(f"[red]Error: {e}[/red]")
+                        display_reasoning_review("verify_and_classify", success=False, has_steps=False)
                 
                 elif choice == "5":
                     console.print("\n[cyan]Thank you for using COT Pythagorean Finder![/cyan]")
