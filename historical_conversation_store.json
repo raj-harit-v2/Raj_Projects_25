@@ -1,9 +1,79 @@
 {
-  "topics": {
-    "mathematics": {
-      "conversations": []
+  "index": {
+    "conversations": [],
+    "by_topic": {},
+    "by_hash": {
+      "3023577ce36325c9": {
+        "topic": "mathematics",
+        "timestamp": 1763190675.121539,
+        "session_id": "2025/11/15/session-1763190666-b4a9ec"
+      },
+      "70677266da6d2400": {
+        "topic": "general",
+        "timestamp": 1763190712.993041,
+        "session_id": "2025/11/15/session-1763190688-091ad4"
+      },
+      "3a1bba0512906a22": {
+        "topic": "finance",
+        "timestamp": 1763191943.4029114,
+        "session_id": "2025/11/15/session-1763191925-0c5dd7"
+      },
+      "69d84475c2ff0843": {
+        "topic": "finance",
+        "timestamp": 1763190791.2642503,
+        "session_id": "2025/11/15/session-1763190765-a5e99c"
+      },
+      "a27ef1642c54139a": {
+        "topic": "mathematics",
+        "timestamp": 1763190831.379561,
+        "session_id": "2025/11/15/session-1763190765-a5e99c"
+      }
     },
-    "documents": {
+    "by_date": [
+      {
+        "query_hash": "3023577ce36325c9",
+        "timestamp": 1763190675.121539,
+        "topic": "mathematics"
+      },
+      {
+        "query_hash": "70677266da6d2400",
+        "timestamp": 1763190712.993041,
+        "topic": "general"
+      },
+      {
+        "query_hash": "3a1bba0512906a22",
+        "timestamp": 1763190741.847467,
+        "topic": "finance"
+      },
+      {
+        "query_hash": "69d84475c2ff0843",
+        "timestamp": 1763190791.2642503,
+        "topic": "finance"
+      },
+      {
+        "query_hash": "a27ef1642c54139a",
+        "timestamp": 1763190831.379561,
+        "topic": "mathematics"
+      },
+      {
+        "query_hash": "3a1bba0512906a22",
+        "timestamp": 1763191943.4029114,
+        "topic": "finance"
+      }
+    ],
+    "recent_topics": [
+      "mathematics",
+      "general",
+      "finance"
+    ]
+  },
+  "metadata": {
+    "total_conversations": 6,
+    "last_updated": "2025-11-15T07:32:23.402911Z",
+    "version": "1.0"
+  },
+  "topics": {
+    "web_research": {
       "conversations": []
     },
     "finance": {
@@ -11,15 +81,15 @@
         {
           "query_hash": "3a1bba0512906a22",
           "query": "How much Anmol singh paid for his DLF apartment via Capbridge?",
-          "timestamp": 1763186559.4342692,
-          "date": "2025-11-15T06:02:39.434269Z",
+          "timestamp": 1763190741.847467,
+          "date": "2025-11-15T07:12:21.847467Z",
           "topic": "finance",
           "success": true,
-          "result_summary": "No relevant information found in the search results regarding Anmol Singh's DLF apartment payment via Capbridge.",
-          "session_id": "2025/11/15/session-1763186532-5e4dfc",
+          "result_summary": "Anmol Singh paid Rs. 0.15 crore for his DLF apartment via Capbridge.",
+          "session_id": "2025/11/15/session-1763190725-cbe451",
           "metadata": {
             "query_type": "general",
-            "confidence": 0.7,
+            "confidence": 0.6,
             "entities": {
               "numbers": [],
               "names": [
@@ -33,14 +103,38 @@
           }
         },
         {
+          "query_hash": "69d84475c2ff0843",
+          "query": "What is the log value of the amount that Anmol singh paid for his DLF apartment via Capbridge?",
+          "timestamp": 1763190791.2642503,
+          "date": "2025-11-15T07:13:11.264250Z",
+          "topic": "finance",
+          "success": true,
+          "result_summary": "The amount Anmol Singh paid was Rs. 71.41 crore (Rs. 714,100,000). Log value (base 10): 8.853759",
+          "session_id": "2025/11/15/session-1763190765-a5e99c",
+          "metadata": {
+            "query_type": "math",
+            "confidence": 0.6,
+            "entities": {
+              "numbers": [],
+              "names": [
+                "What",
+                "Anmol",
+                "Capbridge"
+              ],
+              "dates": [],
+              "urls": []
+            }
+          }
+        },
+        {
           "query_hash": "3a1bba0512906a22",
           "query": "How much Anmol singh paid for his DLF apartment via Capbridge?",
-          "timestamp": 1763186690.5016263,
-          "date": "2025-11-15T06:04:50.501626Z",
+          "timestamp": 1763191943.4029114,
+          "date": "2025-11-15T07:32:23.402911Z",
           "topic": "finance",
           "success": true,
           "result_summary": "Anmol Singh paid Rs. 42.94 crore for his DLF apartment via Capbridge.",
-          "session_id": "2025/11/15/session-1763186670-4c5fc4",
+          "session_id": "2025/11/15/session-1763191925-0c5dd7",
           "metadata": {
             "query_type": "general",
             "confidence": 0.6,
@@ -58,47 +152,91 @@
         }
       ]
     },
-    "technology": {
-      "conversations": []
+    "mathematics": {
+      "conversations": [
+        {
+          "query_hash": "3023577ce36325c9",
+          "query": "Find the ASCII values of characters in INDIA and then return sum of exponentials of those values.",
+          "timestamp": 1763190675.121539,
+          "date": "2025-11-15T07:11:15.121539Z",
+          "topic": "mathematics",
+          "success": true,
+          "result_summary": "The ASCII values for INDIA are [73, 78, 68, 73, 65], and the sum of their exponentials is 7.599822246093079e+33.",
+          "session_id": "2025/11/15/session-1763190666-b4a9ec",
+          "metadata": {
+            "query_type": "math",
+            "confidence": 0.6,
+            "entities": {
+              "numbers": [],
+              "names": [
+                "Find"
+              ],
+              "dates": [],
+              "urls": []
+            }
+          }
+        },
+        {
+          "query_hash": "a27ef1642c54139a",
+          "query": "calculate 5 + 6",
+          "timestamp": 1763190831.379561,
+          "date": "2025-11-15T07:13:51.379560Z",
+          "topic": "mathematics",
+          "success": true,
+          "result_summary": "The sum of 5 and 6 is 11.",
+          "session_id": "2025/11/15/session-1763190765-a5e99c",
+          "metadata": {
+            "query_type": "math",
+            "confidence": 0.5,
+            "entities": {
+              "numbers": [
+                "5",
+                "6"
+              ],
+              "names": [],
+              "dates": [],
+              "urls": []
+            }
+          }
+        }
+      ]
     },
-    "web_research": {
+    "technology": {
       "conversations": []
     },
     "education": {
       "conversations": []
     },
-    "general": {
+    "documents": {
       "conversations": []
-    }
-  },
-  "metadata": {
-    "total_conversations": 2,
-    "last_updated": "2025-11-15T06:04:50.501626Z"
-  },
-  "index": {
-    "by_topic": {},
-    "by_hash": {
-      "3a1bba0512906a22": {
-        "topic": "finance",
-        "timestamp": 1763186690.5016263,
-        "session_id": "2025/11/15/session-1763186670-4c5fc4"
-      }
     },
-    "conversations": [],
-    "by_date": [
-      {
-        "query_hash": "3a1bba0512906a22",
-        "timestamp": 1763186559.4342692,
-        "topic": "finance"
-      },
-      {
-        "query_hash": "3a1bba0512906a22",
-        "timestamp": 1763186690.5016263,
-        "topic": "finance"
-      }
-    ],
-    "recent_topics": [
-      "finance"
-    ]
+    "general": {
+      "conversations": [
+        {
+          "query_hash": "70677266da6d2400",
+          "query": "What do you know about Don Tapscott and Anthony Williams?",
+          "timestamp": 1763190712.993041,
+          "date": "2025-11-15T07:11:52.993041Z",
+          "topic": "general",
+          "success": true,
+          "result_summary": "using Tesla’s patented and patent-pending technology with the obvious upside being the proven innovation that technology brings and the down side being no exclusivity, instead of investing in their own R&D and patent protection where the upside may be exclusivity and the down side may be inferior or unproven technologies.’ [82] Don Tapscott and Anthony Williams have argued for the use of open source strategies in respect of clean technologies.",
+          "session_id": "2025/11/15/session-1763190688-091ad4",
+          "metadata": {
+            "query_type": "general",
+            "confidence": 0.5,
+            "entities": {
+              "numbers": [],
+              "names": [
+                "What",
+                "Don Tapscott",
+                "Anthony Williams"
+              ],
+              "dates": [],
+              "urls": []
+            }
+          }
+        }
+      ]
+    }
   }
 }

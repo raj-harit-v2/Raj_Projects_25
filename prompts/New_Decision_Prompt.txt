@@ -85,20 +85,25 @@ result = await mcp.call_tool('tool_name', {{
 }})
 ```
 
-# RESPONSE EXTRACTION (IMPORTANT - Different tools return different formats!)
+# RESPONSE EXTRACTION (CRITICAL - SandboxMCP.call_tool already extracts results!)
 ```python
+# IMPORTANT: SandboxMCP.call_tool() already extracts the result for you!
+# You receive the extracted value directly, NOT a CallToolResult object.
+
 # FOR MATH TOOLS (add, subtract, multiply, etc.):
-response_data = json.loads(result.content[0].text)
-final_value = response_data["result"]
+# result is a list with one JSON string: ['{{"result": 4}}']
+response_data = json.loads(result[0])  # result[0] is the JSON string
+final_value = response_data[{{"result"}}]
 
 # FOR search_stored_documents (returns list[str] directly):
-chunks = result  # result IS the list, no parsing needed
+chunks = result  # result IS already the list of strings, no parsing needed
 for chunk in chunks:
     chunk_text = str(chunk)
     # Process chunk_text directly
 
 # FOR duckduckgo_search_results (returns formatted text string):
-search_text = result.content[0].text  # This is a STRING, NOT JSON
+# result is a list with one string: ['formatted text here']
+search_text = result[0]  # result[0] is the formatted text string
 # Use search_text directly - it's already formatted text
 ```
 
@@ -111,12 +116,25 @@ search_text = result.content[0].text  # This is a STRING, NOT JSON
 
 # EXAMPLES
 
-**Math Query:**
+**Simple Math Query:**
+```python
+async def solve():
+    # Calculate 2 + 2 using add tool
+    result = await mcp.call_tool('add', {{"input": {{"a": 2, "b": 2}}}})
+    # SandboxMCP.call_tool returns list with JSON string: ['{{"result": 4}}']
+    response_data = json.loads(result[0])  # result[0] is the JSON string
+    final_value = response_data[{{"result"}}]
+    
+    return f"FINAL_ANSWER: The sum of 2 and 2 is {{final_value}}."
+```
+
+**Math Query (ASCII):**
 ```python
 async def solve():
     # Calculate ASCII sum
     result = await mcp.call_tool('strings_to_chars_to_int', {{"input": {{"string": "HELLO"}}}})
-    ascii_values = json.loads(result.content[0].text)["result"]
+    # SandboxMCP.call_tool returns list with JSON string: ['{{"result": [72, 69, 76, 76, 79]}}']
+    ascii_values = json.loads(result[0])[{{"result"}}]
     
     total = sum(ascii_values)
     return f"FINAL_ANSWER: {{total}}"
@@ -162,9 +180,8 @@ async def solve():
     # Search web for information
     result = await mcp.call_tool('duckduckgo_search_results', {{"input": {{"query": "Don Tapscott", "max_results": 3}}}})
     
-    # duckduckgo_search_results returns formatted TEXT string
-    # Access via result.content[0].text (FastMCP format)
-    search_results_text = result.content[0].text
+    # SandboxMCP.call_tool returns list with formatted text: ['formatted text here']
+    search_results_text = result[0]  # result[0] is the formatted text string
     
     # Use the text directly - no json.loads needed
     return f"FINAL_ANSWER: {{search_results_text}}"
@@ -176,9 +193,8 @@ async def solve():
     # Convert webpage to markdown
     result = await mcp.call_tool('convert_webpage_url_into_markdown', {{"input": {{"url": "https://example.com"}}}})
     
-    # convert_webpage_url_into_markdown returns MarkdownOutput
-    # Access via result.content[0].text
-    markdown_content = result.content[0].text
+    # SandboxMCP.call_tool returns list with markdown: ['markdown content here']
+    markdown_content = result[0]  # result[0] is the markdown string
     
     # Use the content directly
     return f"FINAL_ANSWER: {{markdown_content}}"
@@ -330,14 +346,14 @@ async def solve():
         patterns = [
             # Pattern 1: Most specific - "Capbridge paid Rs. X crore to DLF" (for apartment payment)
             r"Capbridge\s+paid\s+(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand)\s+to\s+DLF",
-            # Pattern 2: "Capbridge...Rs. X crore...DLF...apartment"
+            # Pattern 2: "SEBI traced Rs. X crore from Capbridge...to DLF" (from investigation report)
+            r"SEBI\s+traced\s+(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand)\s+from\s+Capbridge.*?to\s+DLF",
+            # Pattern 3: "Capbridge...Rs. X crore...DLF...apartment" (with apartment context)
             r"Capbridge.*?(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand).*?DLF.*?apartment",
-            # Pattern 3: "Rs. X crore...Capbridge...DLF"
-            r"(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand).*?Capbridge.*?DLF",
-            # Pattern 4: General - "Rs. X crore" near "Capbridge" or "DLF" or "apartment"
-            r"(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand)\s*(?:.*?(?:Capbridge|DLF|apartment))",
-            # Pattern 5: Fallback - any "Rs. X crore"
-            r"(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand)",
+            # Pattern 4: "Rs. X crore...Capbridge...DLF" (payment context)
+            r"(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand).*?Capbridge.*?DLF.*?(?:paid|payment|consideration)",
+            # Pattern 5: General - "Rs. X crore" near "Capbridge" AND "DLF" AND "apartment"
+            r"(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand)\s*(?=.*?Capbridge)(?=.*?DLF)(?=.*?apartment)",
         ]
         
         amount_match = None
@@ -386,16 +402,16 @@ async def solve():
         
         # Stage 2: Extract amount with unit - prioritize "Capbridge paid Rs. X crore to DLF"
         patterns = [
-            # Pattern 1: Most specific - "Capbridge paid Rs. X crore to DLF"
+            # Pattern 1: Most specific - "Capbridge paid Rs. X crore to DLF" (for apartment payment)
             r"Capbridge\s+paid\s+(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand)\s+to\s+DLF",
-            # Pattern 2: "Capbridge...Rs. X crore...DLF...apartment"
+            # Pattern 2: "SEBI traced Rs. X crore from Capbridge...to DLF" (from investigation report)
+            r"SEBI\s+traced\s+(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand)\s+from\s+Capbridge.*?to\s+DLF",
+            # Pattern 3: "Capbridge...Rs. X crore...DLF...apartment" (with apartment context)
             r"Capbridge.*?(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand).*?DLF.*?apartment",
-            # Pattern 3: "Rs. X crore...Capbridge...DLF"
-            r"(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand).*?Capbridge.*?DLF",
-            # Pattern 4: General - "Rs. X crore" near context
-            r"(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand)\s*(?:.*?(?:Capbridge|DLF|apartment))",
-            # Pattern 5: Fallback
-            r"(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand)",
+            # Pattern 4: "Rs. X crore...Capbridge...DLF" (payment context)
+            r"(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand).*?Capbridge.*?DLF.*?(?:paid|payment|consideration)",
+            # Pattern 5: General - "Rs. X crore" near "Capbridge" AND "DLF" AND "apartment"
+            r"(?:Rs\.?|₹|INR)\s+(\d+(?:,\d{{3}})*(?:\.\d+)?)\s*(crore|lakh|thousand)\s*(?=.*?Capbridge)(?=.*?DLF)(?=.*?apartment)",
         ]
         
         amount_match = None
