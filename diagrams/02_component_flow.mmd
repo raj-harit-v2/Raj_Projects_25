@@ -1,0 +1,44 @@
+sequenceDiagram
+    participant U as User
+    participant A as agent.py
+    participant H as Heuristics
+    participant HC as HistoricalContext
+    participant L as AgentLoop
+    participant P as Perception
+    participant D as Decision
+    participant AC as Action
+    participant M as ModelManager
+    participant S as MultiMCP
+    participant MCP as MCP Servers
+
+    U->>A: Query Input
+    A->>H: preprocess_query()
+    H-->>A: Processed Query
+    A->>HC: check_duplicate()
+    HC-->>A: Cache Hit/Miss
+    alt Cache Hit
+        A->>U: Cached Answer
+    else Cache Miss
+        A->>HC: format_context_for_prompt()
+        HC-->>A: Historical Context
+        A->>L: Create AgentLoop(context)
+        L->>P: run_perception()
+        P->>M: generate_text(perception_prompt)
+        M-->>P: PerceptionResult
+        P-->>L: selected_servers, intent
+        L->>D: generate_plan()
+        D->>M: generate_text(decision_prompt)
+        M-->>D: Python solve() code
+        D-->>L: Generated Plan
+        L->>AC: run_python_sandbox(code)
+        AC->>S: call_tool(tool_name, args)
+        S->>MCP: Route to Server
+        MCP-->>S: Tool Result
+        S-->>AC: Extracted Result
+        AC-->>L: FINAL_ANSWER
+        L->>H: postprocess_result()
+        H-->>L: Sanitized Result
+        L-->>A: Final Answer
+        A->>HC: add_conversation()
+        A->>U: Display Result
+    end

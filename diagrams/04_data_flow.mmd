@@ -1,0 +1,41 @@
+flowchart TD
+    START[User Query] --> PREPROCESS[Heuristics: Preprocess]
+    PREPROCESS --> CACHE{Historical Context<br/>Cache Check}
+    CACHE -->|Hit| CACHED[Cached Answer]
+    CACHE -->|Miss| PERCEPTION[Perception Module]
+    
+    PERCEPTION --> LLM1[ModelManager: LLM Call]
+    LLM1 --> PERCEPTION_RESULT[PerceptionResult:<br/>- intent<br/>- entities<br/>- selected_servers]
+    
+    PERCEPTION_RESULT --> STRATEGY[Strategy: Select Prompt]
+    STRATEGY --> DECISION[Decision Module]
+    
+    DECISION --> LLM2[ModelManager: LLM Call]
+    LLM2 --> PLAN[Generated solve() Code]
+    
+    PLAN --> ACTION[Action Module: Sandbox]
+    ACTION --> MCP_DISPATCH[MultiMCP: Dispatch]
+    
+    MCP_DISPATCH --> MCP1_TOOL[MCP Server 1: Math Tools]
+    MCP_DISPATCH --> MCP2_TOOL[MCP Server 2: Document Tools]
+    MCP_DISPATCH --> MCP3_TOOL[MCP Server 3: Web Tools]
+    
+    MCP1_TOOL --> RESULT[Tool Results]
+    MCP2_TOOL --> RESULT
+    MCP3_TOOL --> RESULT
+    
+    RESULT --> POSTPROCESS[Heuristics: Postprocess]
+    POSTPROCESS --> FINAL{Contains<br/>FINAL_ANSWER?}
+    
+    FINAL -->|Yes| STORE[Historical Context: Store]
+    FINAL -->|No| FURTHER[FURTHER_PROCESSING_REQUIRED]
+    FURTHER --> PERCEPTION
+    
+    STORE --> OUTPUT[Display to User]
+    CACHED --> OUTPUT
+    
+    style START fill:#e1f5ff
+    style OUTPUT fill:#c8e6c9
+    style LLM1 fill:#ffebee
+    style LLM2 fill:#ffebee
+    style MCP_DISPATCH fill:#fff9c4

@@ -1,0 +1,47 @@
+prompt = f"""
+You are a perception engine helping an AI agent select the most relevant MCP server(s) for a user's query.
+
+AVAILABLE MCP SERVERS:
+{servers_text}
+
+USER QUERY:
+"{user_input}"
+
+YOUR TASKS:
+1. Identify the INTENT of the query
+2. Extract important ENTITIES (names, numbers, concepts)
+3. Suggest a TOOL_HINT if applicable
+4. Select the most relevant MCP server IDs
+
+OUTPUT FORMAT (JSON only):
+{{{{
+  "intent": "brief description of what user wants",
+  "entities": ["entity1", "entity2"],
+  "tool_hint": "suggested tool name or null",
+  "selected_servers": ["server_id1", "server_id2"]
+}}}}
+
+SELECTION RULES:
+- For document searches (who, what, find info, relationship): select "documents"
+- For calculations (calculate, compute, math operations): select "math"
+- For web searches (search web, url, website): select "websearch"
+- If query mentions searching PDFs or documents: select "documents"
+- If unsure, select multiple servers
+- Server IDs must match exactly: math, documents, websearch
+
+EXAMPLES:
+
+Query: "Find ASCII values of INDIA and sum exponentials"
+Output: {{"intent": "Calculate ASCII and sum", "entities": ["INDIA", "ASCII"], "tool_hint": "strings_to_chars_to_int", "selected_servers": ["math"]}}
+
+Query: "How much did someone pay for apartment?"
+Output: {{"intent": "Find payment information from documents", "entities": ["payment", "apartment"], "tool_hint": "search_stored_documents", "selected_servers": ["documents"]}}
+
+Query: "What is the relationship between Company A and Company B?"
+Output: {{"intent": "Find relationship info", "entities": ["Company A", "Company B"], "tool_hint": "search_stored_documents", "selected_servers": ["documents"]}}
+
+Query: "Search web for latest AI news"
+Output: {{"intent": "Web search", "entities": ["AI", "news"], "tool_hint": "duckduckgo_search_results", "selected_servers": ["websearch"]}}
+
+Now analyze the user query and return ONLY the JSON output:
+"""

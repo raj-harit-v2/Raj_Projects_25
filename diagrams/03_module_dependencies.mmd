@@ -1,0 +1,30 @@
+graph LR
+    subgraph "Core Dependencies"
+        A[agent.py] -->|imports| CORE[core/]
+        CORE -->|imports| MODULES[modules/]
+    end
+
+    subgraph "Core Module Dependencies"
+        CONTEXT[context.py] -->|uses| MEMORY_MOD[memory.py]
+        LOOP_MOD[loop.py] -->|uses| PERCEPTION_MOD[perception.py]
+        LOOP_MOD -->|uses| DECISION_MOD[decision.py]
+        LOOP_MOD -->|uses| ACTION_MOD[action.py]
+        LOOP_MOD -->|uses| STRATEGY_MOD[strategy.py]
+        SESSION_MOD[session.py] -->|creates| MCP_SERVERS[MCP Servers]
+    end
+
+    subgraph "Module Dependencies"
+        PERCEPTION_MOD -->|uses| MODEL_MOD[model_manager.py]
+        PERCEPTION_MOD -->|uses| TOOLS_MOD[tools.py]
+        DECISION_MOD -->|uses| MODEL_MOD
+        DECISION_MOD -->|uses| TOOLS_MOD
+        ACTION_MOD -->|uses| SESSION_MOD
+        HEURISTICS_MOD[heuristics.py] -->|standalone| HEURISTICS_MOD
+        HISTORICAL_MOD[historical_context.py] -->|standalone| HISTORICAL_MOD
+        MEMORY_MOD -->|standalone| MEMORY_MOD
+        MODEL_MOD -->|uses| CONFIG[config/]
+    end
+
+    style A fill:#e1f5ff
+    style CORE fill:#fff4e1
+    style MODULES fill:#e8f5e9

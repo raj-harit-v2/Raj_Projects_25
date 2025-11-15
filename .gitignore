@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment variables
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+.pytest_cache/
+
+# Memory and Session Data
+memory/*/
+!memory/.gitkeep
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# FAISS Index (optional - can rebuild)
+# faiss_index/
+# Uncomment above if you want to exclude index from git
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Documentation builds
+docs/_build/
+
+# Package locks (optional)
+# uv.lock
+
+# Test coverage
+.coverage
+htmlcov/

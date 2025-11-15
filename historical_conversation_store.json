@@ -1,0 +1,104 @@
+{
+  "topics": {
+    "mathematics": {
+      "conversations": []
+    },
+    "documents": {
+      "conversations": []
+    },
+    "finance": {
+      "conversations": [
+        {
+          "query_hash": "3a1bba0512906a22",
+          "query": "How much Anmol singh paid for his DLF apartment via Capbridge?",
+          "timestamp": 1763186559.4342692,
+          "date": "2025-11-15T06:02:39.434269Z",
+          "topic": "finance",
+          "success": true,
+          "result_summary": "No relevant information found in the search results regarding Anmol Singh's DLF apartment payment via Capbridge.",
+          "session_id": "2025/11/15/session-1763186532-5e4dfc",
+          "metadata": {
+            "query_type": "general",
+            "confidence": 0.7,
+            "entities": {
+              "numbers": [],
+              "names": [
+                "How",
+                "Anmol",
+                "Capbridge"
+              ],
+              "dates": [],
+              "urls": []
+            }
+          }
+        },
+        {
+          "query_hash": "3a1bba0512906a22",
+          "query": "How much Anmol singh paid for his DLF apartment via Capbridge?",
+          "timestamp": 1763186690.5016263,
+          "date": "2025-11-15T06:04:50.501626Z",
+          "topic": "finance",
+          "success": true,
+          "result_summary": "Anmol Singh paid Rs. 42.94 crore for his DLF apartment via Capbridge.",
+          "session_id": "2025/11/15/session-1763186670-4c5fc4",
+          "metadata": {
+            "query_type": "general",
+            "confidence": 0.6,
+            "entities": {
+              "numbers": [],
+              "names": [
+                "How",
+                "Anmol",
+                "Capbridge"
+              ],
+              "dates": [],
+              "urls": []
+            }
+          }
+        }
+      ]
+    },
+    "technology": {
+      "conversations": []
+    },
+    "web_research": {
+      "conversations": []
+    },
+    "education": {
+      "conversations": []
+    },
+    "general": {
+      "conversations": []
+    }
+  },
+  "metadata": {
+    "total_conversations": 2,
+    "last_updated": "2025-11-15T06:04:50.501626Z"
+  },
+  "index": {
+    "by_topic": {},
+    "by_hash": {
+      "3a1bba0512906a22": {
+        "topic": "finance",
+        "timestamp": 1763186690.5016263,
+        "session_id": "2025/11/15/session-1763186670-4c5fc4"
+      }
+    },
+    "conversations": [],
+    "by_date": [
+      {
+        "query_hash": "3a1bba0512906a22",
+        "timestamp": 1763186559.4342692,
+        "topic": "finance"
+      },
+      {
+        "query_hash": "3a1bba0512906a22",
+        "timestamp": 1763186690.5016263,
+        "topic": "finance"
+      }
+    ],
+    "recent_topics": [
+      "finance"
+    ]
+  }
+}

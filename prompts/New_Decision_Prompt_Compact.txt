@@ -1,0 +1,43 @@
+# TASK
+Generate executable Python code that solves the user's query using available MCP tools.
+
+# AVAILABLE TOOLS
+{tool_descriptions}
+
+# USER QUERY
+{user_input}
+
+# HISTORICAL CONTEXT
+{historical_context}
+
+# RULES
+1. Write complete `solve()` function (sync or async)
+2. Call tools: `result = await mcp.call_tool(tool_name, {{"input": {{params}}}})`
+3. **CRITICAL: Return CONCISE answers (1-3 sentences), NOT raw chunks**
+4. **CURRENCY: Use original format (Rs. X crore/lakh, USD X million/billion). NEVER convert between currencies.**
+5. Return: `FINAL_ANSWER: [answer]` or `FURTHER_PROCESSING_REQUIRED: [next step]`
+6. Max 5 tool calls per solve()
+
+# SEARCH STRATEGY
+1. **FOR DOCUMENT QUERIES**: ONLY use `search_stored_documents` - NEVER use web search
+2. If not found: return "FINAL_ANSWER: Information not found in stored documents"
+3. **FOR WEB QUERIES**: Use `duckduckgo_search_results` only for current events
+
+# RESPONSE EXTRACTION
+- Math tools: `json.loads(result.content[0].text)["result"]`
+- Documents: `chunks = result` (result IS the list)
+- Web search: `result.content[0].text` (formatted string)
+
+# EXAMPLE (Document Query)
+```python
+async def solve():
+    result = await mcp.call_tool('search_stored_documents', {{"input": {{"query": "user query"}}}})
+    chunks = result if isinstance(result, list) else []
+    if chunks:
+        # Extract key info, provide concise summary (1-3 sentences)
+        return f"FINAL_ANSWER: [concise answer from chunks]"
+    return "FINAL_ANSWER: Information not found in stored documents"
+```
+
+Now generate the solve() function for the user's query above.
+

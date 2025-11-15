@@ -1,0 +1,51 @@
+graph TB
+    subgraph L1["Layer 1: User Interface"]
+        UI[agent.py<br/>REPL Interface]
+    end
+
+    subgraph L2["Layer 2: Orchestration"]
+        ORCH[core/loop.py<br/>AgentLoop]
+        CTX[core/context.py<br/>Context Management]
+        STRAT[core/strategy.py<br/>Strategy Selection]
+    end
+
+    subgraph L3["Layer 3: Cognitive Processing"]
+        PERC[modules/perception.py<br/>Observe]
+        DEC[modules/decision.py<br/>Decide]
+        ACT[modules/action.py<br/>Act]
+    end
+
+    subgraph L4["Layer 4: Support Services"]
+        HEUR[modules/heuristics.py<br/>Query Processing]
+        HIST[modules/historical_context.py<br/>Context Retrieval]
+        MEM[modules/memory.py<br/>Session Memory]
+        MOD[modules/model_manager.py<br/>LLM Interface]
+    end
+
+    subgraph L5["Layer 5: Execution"]
+        DISP[core/session.py<br/>MultiMCP Dispatcher]
+        MCP1_SRV[mcp_server_1.py]
+        MCP2_SRV[mcp_server_2.py]
+        MCP3_SRV[mcp_server_3.py]
+    end
+
+    subgraph L6["Layer 6: Infrastructure"]
+        CFG[config/<br/>Configuration]
+        PROMPT[prompts/<br/>Prompts]
+        LLM_EXT[External LLMs]
+        STORAGE[Storage Systems]
+    end
+
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L3 --> L5
+    L4 --> L6
+    L5 --> L6
+
+    style L1 fill:#e3f2fd
+    style L2 fill:#fff3e0
+    style L3 fill:#e8f5e9
+    style L4 fill:#f3e5f5
+    style L5 fill:#fff9c4
+    style L6 fill:#ffebee
